@@ -21,5 +21,6 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'react/jsx-one-expression-per-line': 'off',
     'no-console': 'off',
+    'no-param-reassign': 'off',
   },
 };

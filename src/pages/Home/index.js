@@ -1,11 +1,21 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { MdAddShoppingCart } from 'react-icons/md';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Creators as CartActions } from '../../store/ducks/cart';
+
 import { formatPrice } from '../../util/format';
 import api from '../../services/api';
 
 import { ProductList, Product, ShoppButton } from './styles';
 
-export default class Home extends Component {
+class Home extends Component {
+  static propTypes = {
+    addProduct: PropTypes.func.isRequired,
+  };
+
   state = {
     products: [],
   };
@@ -21,19 +31,25 @@ export default class Home extends Component {
     this.setState({ products: data });
   }
 
+  handleAddProduct = (product) => {
+    const { addProduct } = this.props;
+
+    addProduct(product);
+  };
+
   render() {
     const { products } = this.state;
 
     return (
       <ProductList>
         {products.map(product => (
-          <Product>
+          <Product key={product.id}>
             <img src={product.image} alt={product.title} />
 
             <strong>{product.title}</strong>
             <span>{product.priceFormatted}</span>
 
-            <ShoppButton type="button">
+            <ShoppButton type="button" onClick={() => this.handleAddProduct(product)}>
               <div>
                 <MdAddShoppingCart size={16} color="#fff" /> 3
               </div>
@@ -45,3 +61,10 @@ export default class Home extends Component {
     );
   }
 }
+
+const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch);
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Home);

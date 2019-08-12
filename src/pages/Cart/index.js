@@ -1,9 +1,25 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { MdAddCircleOutline, MdRemoveCircleOutline, MdDelete } from 'react-icons/md';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Creators as CartActions } from '../../store/ducks/cart';
+
+import { formatPrice } from '../../util/format';
 import { Container, ProductsTable, Total } from './styles';
 
-export default function Cart() {
+function Cart({
+  cart, total, removeProduct, updateAmount,
+}) {
+  function handleIncrease({ id, amount }) {
+    updateAmount(id, amount + 1);
+  }
+
+  function handleDecrease({ id, amount }) {
+    updateAmount(id, amount - 1);
+  }
+
   return (
     <Container>
       <ProductsTable>
@@ -17,37 +33,46 @@ export default function Cart() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-              <img
-                src="https://static.netshoes.com.br/produtos/tenis-asics-gel-evasion-masculino/26/D18-4157-026/D18-4157-026_detalhe2.jpg?resize=326:*"
-                alt="Shoes"
-              />
-            </td>
-            <td>
-              <strong>Tênis para correr</strong>
-              <span>R$199,00</span>
-            </td>
-            <td>
-              <div>
-                <button type="button">
-                  <MdAddCircleOutline size={20} color="#7159c1" />
+          {cart.map(product => (
+            <tr key={product.id}>
+              <td>
+                <img src={product.image} alt={product.title} />
+              </td>
+              <td>
+                <strong>{product.title}</strong>
+                <span>{product.priceFormatted}</span>
+              </td>
+              <td>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleDecrease(product);
+                    }}
+                  >
+                    <MdRemoveCircleOutline size={20} color="#7159c1" />
+                  </button>
+                  <input type="number" readOnly value={product.amount} />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleIncrease(product);
+                    }}
+                  >
+                    <MdAddCircleOutline size={20} color="#7159c1" />
+                  </button>
+                </div>
+              </td>
+              <td>
+                <strong>{product.subtotal}</strong>
+              </td>
+              <td>
+                <button type="button" onClick={() => removeProduct(product.id)}>
+                  <MdDelete size={20} color="#7159c1" />
                 </button>
-                <input type="number" readOnly value={2} />
-                <button type="button">
-                  <MdRemoveCircleOutline size={20} color="#7159c1" />
-                </button>
-              </div>
-            </td>
-            <td>
-              <strong>R$398,00</strong>
-            </td>
-            <td>
-              <button type="button">
-                <MdDelete size={20} color="#7159c1" />
-              </button>
-            </td>
-          </tr>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </ProductsTable>
 
@@ -56,9 +81,41 @@ export default function Cart() {
 
         <Total>
           <span>TOTAL</span>
-          <strong>R$456,98</strong>
+          <strong>{total}</strong>
         </Total>
       </footer>
     </Container>
   );
 }
+
+Cart.propTypes = {
+  removeProduct: PropTypes.func.isRequired,
+  updateAmount: PropTypes.func.isRequired,
+  total: PropTypes.string.isRequired,
+  cart: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      image: PropTypes.string,
+      title: PropTypes.string,
+      priceFormatted: PropTypes.string,
+      amount: PropTypes.number,
+    }),
+  ).isRequired,
+};
+
+const mapStateToProps = state => ({
+  cart: state.cart.products.map(product => ({
+    ...product,
+    subtotal: formatPrice(product.price * product.amount),
+  })),
+  total: formatPrice(
+    state.cart.products.reduce((total, product) => total + product.price * product.amount, 0),
+  ),
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Cart);
