@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { MdAddCircleOutline, MdRemoveCircleOutline, MdDelete } from 'react-icons/md';
+import {
+  MdAddCircleOutline,
+  MdRemoveCircleOutline,
+  MdDelete,
+} from 'react-icons/md';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,9 +13,7 @@ import { Creators as CartActions } from '../../store/ducks/cart';
 import { formatPrice } from '../../util/format';
 import { Container, ProductsTable, Total } from './styles';
 
-function Cart({
-  cart, total, removeProduct, updateAmountRequest,
-}) {
+function Cart({ cart, total, removeProduct, updateAmountRequest }) {
   function handleIncrease({ id, amount }) {
     updateAmountRequest(id, amount + 1);
   }
@@ -99,7 +101,7 @@ Cart.propTypes = {
       title: PropTypes.string,
       priceFormatted: PropTypes.string,
       amount: PropTypes.number,
-    }),
+    })
   ).isRequired,
 };
 
@@ -109,13 +111,17 @@ const mapStateToProps = state => ({
     subtotal: formatPrice(product.price * product.amount),
   })),
   total: formatPrice(
-    state.cart.products.reduce((total, product) => total + product.price * product.amount, 0),
+    state.cart.products.reduce(
+      (total, product) => total + product.price * product.amount,
+      0
+    )
   ),
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(CartActions, dispatch);
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(Cart);
