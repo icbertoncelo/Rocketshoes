@@ -13,7 +13,11 @@ import { ProductList, Product, ShoppButton } from './styles';
 
 class Home extends Component {
   static propTypes = {
-    addProduct: PropTypes.func.isRequired,
+    addProductRequest: PropTypes.func.isRequired,
+    amount: PropTypes.shape({
+      id: PropTypes.number,
+      amount: PropTypes.number,
+    }).isRequired,
   };
 
   state = {
@@ -31,14 +35,15 @@ class Home extends Component {
     this.setState({ products: data });
   }
 
-  handleAddProduct = (product) => {
-    const { addProduct } = this.props;
+  handleAddProduct = (id) => {
+    const { addProductRequest } = this.props;
 
-    addProduct(product);
+    addProductRequest(id);
   };
 
   render() {
     const { products } = this.state;
+    const { amount } = this.props;
 
     return (
       <ProductList>
@@ -49,9 +54,9 @@ class Home extends Component {
             <strong>{product.title}</strong>
             <span>{product.priceFormatted}</span>
 
-            <ShoppButton type="button" onClick={() => this.handleAddProduct(product)}>
+            <ShoppButton type="button" onClick={() => this.handleAddProduct(product.id)}>
               <div>
-                <MdAddShoppingCart size={16} color="#fff" /> 3
+                <MdAddShoppingCart size={16} color="#fff" /> {amount[product.id] || 0}
               </div>
               <span>Adicionar ao carrinho</span>
             </ShoppButton>
@@ -62,9 +67,17 @@ class Home extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  amount: state.cart.products.reduce((amount, product) => {
+    amount[product.id] = product.amount;
+
+    return amount;
+  }, {}),
+});
+
 const mapDispatchToProps = dispatch => bindActionCreators(CartActions, dispatch);
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(Home);
