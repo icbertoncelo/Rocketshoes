@@ -10,14 +10,14 @@ import { formatPrice } from '../../util/format';
 import { Container, ProductsTable, Total } from './styles';
 
 function Cart({
-  cart, total, removeProduct, updateAmount,
+  cart, total, removeProduct, updateAmountRequest,
 }) {
   function handleIncrease({ id, amount }) {
-    updateAmount(id, amount + 1);
+    updateAmountRequest(id, amount + 1);
   }
 
   function handleDecrease({ id, amount }) {
-    updateAmount(id, amount - 1);
+    updateAmountRequest(id, amount - 1);
   }
 
   return (
@@ -90,7 +90,7 @@ function Cart({
 
 Cart.propTypes = {
   removeProduct: PropTypes.func.isRequired,
-  updateAmount: PropTypes.func.isRequired,
+  updateAmountRequest: PropTypes.func.isRequired,
   total: PropTypes.string.isRequired,
   cart: PropTypes.arrayOf(
     PropTypes.shape({

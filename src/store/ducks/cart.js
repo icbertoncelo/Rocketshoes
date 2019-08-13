@@ -7,7 +7,8 @@ export const Types = {
   ADD_REQUEST: '@cart/ADD_REQUEST',
   ADD_SUCCESS: '@cart/ADD_SUCCESS',
   REMOVE: '@cart/REMOVE',
-  UPDATE_AMOUNT: '@cart/UPDATE_AMOUNT',
+  UPDATE_AMOUNT_REQUEST: '@cart/UPDATE_AMOUNT_REQUEST',
+  UPDATE_AMOUNT_SUCCESS: '@cart/UPDATE_AMOUNT_SUCCESS',
 };
 
 /**
@@ -33,10 +34,7 @@ export default function cart(state = INITIAL_STATE, action) {
           draft.products.splice(productIndex, 1);
         }
       });
-    case Types.UPDATE_AMOUNT: {
-      if (action.payload.amount <= 0) {
-        return state;
-      }
+    case Types.UPDATE_AMOUNT_SUCCESS: {
       return produce(state, (draft) => {
         const productIndex = draft.products.findIndex(product => product.id === action.payload.id);
 
@@ -66,8 +64,12 @@ export const Creators = {
     type: Types.REMOVE,
     payload: { id },
   }),
-  updateAmount: (id, amount) => ({
-    type: Types.UPDATE_AMOUNT,
+  updateAmountRequest: (id, amount) => ({
+    type: Types.UPDATE_AMOUNT_REQUEST,
+    payload: { id, amount },
+  }),
+  updateAmountSuccess: (id, amount) => ({
+    type: Types.UPDATE_AMOUNT_SUCCESS,
     payload: { id, amount },
   }),
 };
