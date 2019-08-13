@@ -1,6 +1,24 @@
 # Rocketshoes
 
-Developed in the bootcamp
+Its a e-commerce application developed in the rocketseat bootcamp
+
+<!-- HOME -->
+<br />
+<p align="center">
+  <img src="https://raw.githubusercontent.com/icbertoncelo/Rocketshoes/master/images/home.png" alt="Home">
+
+  <h3 align="center">Home screen</h3>
+</p>
+
+You can check the shopping basket.
+
+<!-- CART -->
+<br />
+<p align="center">
+  <img src="https://raw.githubusercontent.com/icbertoncelo/Rocketshoes/master/images/cart.png" alt="Cart">
+
+  <h3 align="center">Cart</h3>
+</p>
 
 ## Available Scripts
 
